@@ -1,0 +1,5 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =3
+let g:netrw_dirhist_3='C:\raylib\raylib\src'
+let g:netrw_dirhist_2='C:\raylib\raylib\src\external\glfw\src'
+let g:netrw_dirhist_1='C:/Program Files (x86)/Vim/vim90/syntax'
