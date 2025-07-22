@@ -13,10 +13,15 @@ Plug 'junegunn/fzf', {'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 Plug 'wellle/context.vim' 
+Plug 'justinmk/vim-dirvish'
 
-let g:ale_linters = { 'rust': ['analyzer'] }
+" Ruby Support
+Plug 'vim-ruby/vim-ruby'           " Official Ruby support
+Plug 'tpope/vim-bundler'           " Bundler integration
+
+let g:ale_linters = { 'rust': ['analyzer'], 'ruby': ['rubocop', 'solargraph']}
+let g:ale_fixers = {'rust': ['rustfmt'], 'ruby': ['rubocop']}
 let g:ale_completion_enabled = 1
-let g:ale_fixers = { 'rust': ['rustfmt'] }
 let g:ale_fix_on_save = 1
 let g:ale_rust_rustfmt_options = '--edition 2021'
 
@@ -26,6 +31,8 @@ set termguicolors
 set cursorline
 set signcolumn=number
 set mouse=a
+set foldmethod=syntax
+set foldcolumn=1
 
 call plug#end()
 
