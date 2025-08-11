@@ -81,10 +81,9 @@ require'lspconfig'.eslint.setup{}
 -- Key mappings
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
 -- vim.keymap.set('n', '<C-]>', vim.lsp.buf.definition)
-vim.keymap.set('n', '<C-[>', '<C-o>')
 vim.keymap.set('n', 'K', vim.lsp.buf.hover) 
 vim.keymap.set('n', 'gr', vim.lsp.buf.references)
-vim.keymap.set('n', '<C-Q>', '<C-o>:q<CR>')
+vim.keymap.set('n', '<C-Q>', ':q<CR>')
 
 vim.keymap.set('n', '<C-]>', function()
   vim.cmd('split')
