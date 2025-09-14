@@ -1,44 +1,35 @@
 call plug#begin('~/.vim/plugged')
 
-" Your plugins go here
 Plug 'rust-lang/rust.vim'
 Plug 'dense-analysis/ale'
-
-Plug 'dense-analysis/ale'
-Plug 'rust-lang/rust.vim'
-
 Plug 'morhetz/gruvbox'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-
 Plug 'junegunn/fzf', {'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-
-Plug 'wellle/context.vim' 
 Plug 'justinmk/vim-dirvish'
+Plug 'SmiteshP/nvim-navic'
+Plug 'NLKNguyen/papercolor-theme'
 
 " Ruby Support
 Plug 'vim-ruby/vim-ruby'           " Official Ruby support
 Plug 'tpope/vim-bundler'           " Bundler integration
-
 Plug 'tpope/vim-fugitive'
-
 Plug 'preservim/vim-markdown'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 
 " Add nvim-lspconfig to your plugins
 Plug 'neovim/nvim-lspconfig'
 
+
 " Disable ALE LSP
 let g:ale_disable_lsp = 1
 
-let g:vim_markdown_folding_enabled = 1
-let g:vim_markdown_folding_level = 2
+let g:vim_markdown_folding_enabled = 0
+let g:vim_markdown_folding_level = 0
 let g:vim_markdown_toc_autofit = 1
 
-let g:ale_disable_lsp = 1
-
 let g:ale_linters = { 'rust': ['analyzer'], 'ruby': ['standardrb'], 'markdown': ['markdownlint'], 'javascript': ['eslint'], 'vue': ['eslint', 'vue_ls'], 'typescript': ['eslint', 'tsserver']}
-let g:ale_fixers = {'rust': ['rustfmt'], 'ruby': ['standardrb'], 'markdown': ['prettier'], 'vue': ['eslint'], 'typescript': ['eslint'], 'javascript': ['eslint']}
+let g:ale_fixers = { 'rust': ['rustfmt'],'ruby': ['standardrb'], 'markdown': ['prettier'],  'vue': ['eslint'],  'typescript': ['eslint'], 'javascript': ['eslint']}
 let g:ale_completion_enabled = 1
 let g:ale_fix_on_save = 1
 let g:ale_rust_rustfmt_options = '--edition 2021'
@@ -52,9 +43,9 @@ set termguicolors
 set cursorline
 set signcolumn=number
 set mouse=a
-set foldmethod=syntax
-set foldlevel=99
-set foldcolumn=1
+"set foldmethod=syntax
+"set foldlevel=1
+set foldcolumn=0
 
 call plug#end()
 
@@ -74,9 +65,50 @@ inoremap <C-d> <C-R>=strftime("%Y-%m-%d")<CR>
 
 " After call plug#end(), add:
 lua << EOF
-require'lspconfig'.solargraph.setup{}
-require'lspconfig'.vue_ls.setup{}
+local navic = require("nvim-navic")
+
+local lspconfig = require('lspconfig')
+local configs = require('lspconfig.configs')
+
+if not configs.vue_language_server then
+  configs.vue_language_server = {
+    default_config = {
+      cmd = { 'vue-language-server', '--stdio' },
+      filetypes = { 'vue' },
+      root_dir = lspconfig.util.root_pattern('package.json', '.git'),
+    },
+  }
+end
+
+-- Setup the server
+lspconfig.vue_language_server.setup{}
+
+require'lspconfig'.solargraph.setup{
+  on_attach = function(client, bufnr)
+    if client.server_capabilities.documentSymbolProvider then
+      navic.attach(client, bufnr)
+    end
+  end,
+  settings = {
+  solargraph = {
+      diagnostics = false
+    }
+  }
+}
+
+
+
+vim.o.winbar = '%{%v:lua.require("nvim-navic").get_location()%}'
+vim.api.nvim_set_hl(0, "NavicSeparator", { bg = "#aa55aa" })
 require'lspconfig'.eslint.setup{}
+require'lspconfig'.ts_ls.setup{
+  filetypes = { 'typescript', 'javascript', 'vue' },
+  init_options = {
+    plugins = {
+      { name = '@vue/typescript-plugin', location = '/opt/homebrew/lib/node_modules/@vue/language-server', languages = { 'vue' } }
+    }
+  }
+}
 
 -- Key mappings
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
@@ -86,7 +118,6 @@ vim.keymap.set('n', 'gr', vim.lsp.buf.references)
 vim.keymap.set('n', '<C-Q>', ':q<CR>')
 
 vim.keymap.set('n', '<C-]>', function()
-  vim.cmd('split')
   vim.lsp.buf.definition()
 end)
 
