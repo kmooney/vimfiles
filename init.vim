@@ -20,6 +20,10 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 " Add nvim-lspconfig to your plugins
 Plug 'neovim/nvim-lspconfig'
 
+" completion
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'"
+
 
 " Disable ALE LSP
 let g:ale_disable_lsp = 1
@@ -96,7 +100,7 @@ require'lspconfig'.solargraph.setup{
   }
 }
 
-
+require'lspconfig'.rust_analyzer.setup{}
 
 vim.o.winbar = '%{%v:lua.require("nvim-navic").get_location()%}'
 vim.api.nvim_set_hl(0, "NavicSeparator", { bg = "#aa55aa" })
@@ -120,6 +124,21 @@ vim.keymap.set('n', '<C-Q>', ':q<CR>')
 vim.keymap.set('n', '<C-]>', function()
   vim.lsp.buf.definition()
 end)
+
+vim.diagnostic.config({
+  virtual_text = true,
+})
+
+-- In your plugin manager
+require('cmp').setup({
+  sources = {
+    { name = 'nvim_lsp' },
+  },
+  mapping = require('cmp').mapping.preset.insert({
+    ['<C-Space>'] = require('cmp').mapping.complete(),
+    ['<CR>'] = require('cmp').mapping.confirm({ select = true }),
+  }),
+})
 
 EOF
 
