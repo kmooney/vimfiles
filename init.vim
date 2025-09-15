@@ -28,6 +28,9 @@ Plug 'hrsh7th/cmp-nvim-lsp'"
 " Disable ALE LSP
 let g:ale_disable_lsp = 1
 
+let g:markdown_folding = 0
+let g:vim_markdown_folding_disabled = 1
+
 let g:vim_markdown_folding_enabled = 0
 let g:vim_markdown_folding_level = 0
 let g:vim_markdown_toc_autofit = 1
